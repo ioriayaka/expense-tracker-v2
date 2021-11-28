@@ -5,13 +5,12 @@ const exphbs = require('express-handlebars')
 const flash = require('connect-flash')
 const app = express()
 const methodOverride = require('method-override') 
-const routes = require('./routes')
-const chart = require('chart.js')
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+const routes = require('./routes')
 require('./config/mongoose')
-const port = process.env.port || 3000
+const port = process.env.port
 
 
 app.use(express.urlencoded({ extended: true }))
@@ -24,9 +23,9 @@ app.engine('handlebars',
   })
 )
 app.set('view engine', 'handlebars')
-
+app.use(methodOverride('_method'))
 app.use(session({
-  secret: 'ThisIsMySecret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
@@ -35,11 +34,10 @@ app.use(flash())
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
-  res.locals.success_messages = req.flash('success_messages')  // 設定 success_msg 訊息
-  res.locals.error_messages = req.flash('error_messages')  // 設定 warning_msg 訊息
-  next()
+  res.locals.success_messages = req.flash('success_messages')  
+  res.locals.error_messages = req.flash('error_messages')  
 })
-app.use(methodOverride('_method'))
+
 app.use(routes)
 
 app.listen(port, () => {
