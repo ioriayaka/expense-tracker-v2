@@ -5,6 +5,7 @@ const exphbs = require('express-handlebars')
 const flash = require('connect-flash')
 const app = express()
 const methodOverride = require('method-override') 
+var MemoryStore = require('memorystore')(session)
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -27,7 +28,11 @@ app.use(methodOverride('_method'))
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { maxAge: 86400000 },
+  store: new MemoryStore({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  }),
 }))
 usePassport(app)
 app.use(flash())
