@@ -1,13 +1,14 @@
 const moment = require('moment')
 const Record = require('../models/record')
 const Category = require('../models/category')
-const { getIconName, getTotalAmount } = require('../public/javascripts/helper')
+const { getIconName, getTotalAmount, userFilter} = require('../public/javascripts/helper')
 const User = require('../models/user')
+const bcrypt = require('bcryptjs')
 const moneyController = {
-  getExpense: async(req, res, next) => {
+  getExpense: async (req, res, next) => {
     try {
       const userId = req.user._id
-      const [ records, categories] = await Promise.all([
+      const [records, categories] = await Promise.all([
         Record.find({
           userId,
           type: 'expense'
@@ -28,12 +29,12 @@ const moneyController = {
         endDate,
         index
       })
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  getFilteredExpense: async(req, res, next) => {
+  getFilteredExpense: async (req, res, next) => {
     try {
       const userId = req.user._id
       const categoryFilter = req.query.category
@@ -41,7 +42,7 @@ const moneyController = {
       const index = "expense"
       if (new Date(startDate) > new Date(endDate)) {
         req.flash('error_messages', '起訖日期不正確，重新輸入')
-        return  res.redirect('/')
+        return res.redirect('/')
       }
       const [filteredRecords, categories] = await Promise.all([
         Record.find({
@@ -64,7 +65,7 @@ const moneyController = {
         endDate,
         index
       })
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
@@ -75,25 +76,25 @@ const moneyController = {
       index
     })
   },
-  createExpense: async(req, res, next) => {
+  createExpense: async (req, res, next) => {
     try {
       const userId = req.user._id
       const { name, date, category, amount, merchant } = req.body
       if (name === "" || date === "" || category === "" || amount === "" || merchant === "") {
-      return res.redirect('/expense/records/new')
+        return res.redirect('/expense/records/new')
       }
       const record = await Record.create({ name, date, category, amount, merchant, userId, type: 'expense' })
-      const user = await User.findOne({_id: userId})
+      const user = await User.findOne({ _id: userId })
       user.records.push(record._id)
       await user.save()
       req.flash('success_messages', '已成功建立支出紀錄')
       res.redirect('/')
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  editPage: async(req, res, next) => {
+  editPage: async (req, res, next) => {
     try {
       const userId = req.user._id
       const _id = req.params.id
@@ -103,12 +104,12 @@ const moneyController = {
         record,
         index
       })
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  putExpense: async(req, res, next) => {
+  putExpense: async (req, res, next) => {
     try {
       const userId = req.user._id
       const _id = req.params.id
@@ -133,12 +134,12 @@ const moneyController = {
       await record.save()
       req.flash('success_messages', '已成功修改支出紀錄')
       res.redirect('/')
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  deleteExpense: async(req, res, next) => {
+  deleteExpense: async (req, res, next) => {
     try {
       const userId = req.user._id
       const _id = req.params.id
@@ -149,15 +150,15 @@ const moneyController = {
       await user.save()
       req.flash('success_messages', '已成功刪除紀錄')
       return res.redirect('back')
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  getIncome: async(req, res, next) => {
+  getIncome: async (req, res, next) => {
     try {
       const userId = req.user._id
-      const [ incomeRecords, categories] = await Promise.all([
+      const [incomeRecords, categories] = await Promise.all([
         Record.find({
           userId,
           type: 'income'
@@ -178,12 +179,12 @@ const moneyController = {
         endDate,
         index
       })
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  getFilteredIncome: async(req, res, next) => {
+  getFilteredIncome: async (req, res, next) => {
     try {
       const userId = req.user._id
       const categoryFilter = req.query.category
@@ -191,7 +192,7 @@ const moneyController = {
       let { startDate, endDate } = req.query
       if (new Date(startDate) > new Date(endDate)) {
         req.flash('error_messages', '起訖日期不正確，重新輸入')
-        return  res.redirect('/income')
+        return res.redirect('/income')
       }
       const [filteredRecords, categories] = await Promise.all([
         Record.find({
@@ -214,30 +215,30 @@ const moneyController = {
         endDate,
         index
       })
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  createIncome: async(req, res, next) => {
+  createIncome: async (req, res, next) => {
     try {
       const userId = req.user._id
       const { name, date, category, amount, merchant } = req.body
       if (name === "" || date === "" || category === "" || amount === "" || merchant === "") {
-      return res.redirect('/income/records/new')
+        return res.redirect('/income/records/new')
       }
       const record = await Record.create({ name, date, category, amount, merchant, userId, type: 'income' })
-      const user = await User.findOne({_id: userId})
+      const user = await User.findOne({ _id: userId })
       user.records.push(record._id)
       await user.save()
       req.flash('success_messages', '已成功建立收入紀錄')
       res.redirect('/income')
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
   },
-  putIncome: async(req, res, next) => {
+  putIncome: async (req, res, next) => {
     try {
       const userId = req.user._id
       const _id = req.params.id
@@ -262,10 +263,72 @@ const moneyController = {
       await record.save()
       req.flash('success_messages', '已成功修改收入紀錄')
       res.redirect('/income')
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       next(err)
     }
+  }, getSetting: async (req, res, next) => {
+    try {
+      const index = 'setting'
+      const _id = req.user._id
+      const user = await User.findOne({ _id }).lean()
+      console.log(user)
+      const { name, email } = user
+      return res.render('setting', { name, email, index })
+    } catch (err) {
+      console.log(err)
+      next(err)
+    }
+  },
+  putSetting: async (req, res, next) => {
+    try {
+      const { name, newEmail, password, confirmPassword } = req.body
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,}$/
+      let errors = []
+      if (!name || !newEmail) {
+        errors.push({ message: '姓名/Email不可空白。' })
+      }
+      if (name.length > 32) {
+        errors.push({ message: '不可大於32字元。' })
+      }
+      const users = await User.find({ email: { $ne: newEmail } })
+      const userFilter1 = userFilter(users, newEmail)
+
+      if (userFilter1.length > 0) {
+        errors.push({ message: '這個信箱已經存在了。' })
+      }
+      if (errors.length) {
+        return res.render('setting', { errors, name, newEmail, password, confirmPassword })
+      }
+      const user = await User.findOne(req.user._id).lean()
+      if (password === "") {
+        await user.updateOne({
+          name, email: newEmail
+        })
+        req.flash('success_messages', '成功更新個人資料設定！')
+        return res.redirect('/setting')
+      } else {
+        let errors = []
+        // if (!regex.test(password)) {
+        //   errors.push({ message: '密碼至少8碼，至少1個大寫字母，1個小寫字母和1個數字！' })
+        // }
+        if (password !== confirmPassword) {
+          errors.push({ message: '密碼及確認密碼不一致！' })
+        }
+        if (errors.length) {
+          return res.render('setting', { errors, name, newEmail, password, confirmPassword })
+        }
+        await user.updateOne({
+          name, email: newEmail,
+          password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null)
+        })
+        req.flash('success_messages', '成功更新個人資料設定！')
+        return res.redirect('/setting')
+      }
+    } catch (error) {
+      console.warn(error)
+    }
+
   }
 }
 module.exports = moneyController

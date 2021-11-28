@@ -32,6 +32,10 @@ router.get('/balance', authenticator, balanceController.balancePage)
 
 router.get('/balance/records/filter', balanceController.getFilteredBalance)
 
+router.get('/setting', authenticator, moneyController.getSetting)
+
+router.put('/setting', authenticator, moneyController.putSetting)
+
 router.get('/', authenticator, moneyController.getExpense)
 
 module.exports = router

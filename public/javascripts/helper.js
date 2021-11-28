@@ -5,7 +5,7 @@ module.exports = {
     const category = categories.find((category) => category.name === categoryName)
     return category.icon
   },
-   getTotalAmount(records) {
+  getTotalAmount(records) {
     let totalAmount = 0
     records.forEach(record => {
       totalAmount += record.amount
@@ -57,5 +57,9 @@ module.exports = {
   },
   filterByCategory(aim, category) {
     return aim.filter(item => item.category == category)
+  }, 
+  userFilter(aim, email) {
+    return aim.filter(item => item.email == email)
   }
+
 }

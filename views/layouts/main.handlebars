@@ -24,12 +24,13 @@
           <a class="{{#if (eq index 'userList')}} nav-link active{{else}} nav-link{{/if}}" href="/admin/index">使用者清單</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="{{#if (eq index 'userRating')}}nav-link dropdown-toggle active {{else}} nav-link dropdown-toggle{{/if}}" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
+          <a class="{{#if (eq index 'userRating')}}nav-link dropdown-toggle active {{else}} nav-link dropdown-toggle{{/if}}"
+            href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
             使用者排名
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="/admin/users/income" >收入排行表</a>
+            <a class="dropdown-item" href="/admin/users/income">收入排行表</a>
             <a class="dropdown-item" href="/admin/users/expense">支出排行表</a>
           </div>
         </li>
@@ -63,7 +64,9 @@
         <li class="nav-item {{#if (eq index 'balance')}} active {{/if}}">
           <a class="nav-link" href="/balance">收支平衡表</a>
         </li>
-  
+        <li class="nav-item {{#if (eq index 'setting')}} active {{/if}}">
+          <a class="nav-link" href="/setting">設定</a>
+        </li>
       </ul>
     </div>
     {{/if}}
