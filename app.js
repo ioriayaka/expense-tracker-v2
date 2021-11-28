@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const routes = require('./routes')
 require('./config/mongoose')
-const port = process.env.port
+const port = process.env.port || 8080
 
 
 app.use(express.urlencoded({ extended: true }))
