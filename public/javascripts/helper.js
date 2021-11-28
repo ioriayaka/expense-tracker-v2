@@ -57,7 +57,7 @@ module.exports = {
   },
   filterByCategory(aim, category) {
     return aim.filter(item => item.category == category)
-  }, 
+  },
   userFilter(aim, email) {
     return aim.filter(item => item.email == email)
   }

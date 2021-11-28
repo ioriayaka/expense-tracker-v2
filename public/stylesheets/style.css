@@ -1,3 +1,13 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background-image: url('https://www.okwork.taipei/_upload/161117075814/RD_Pics/%E8%B2%A1%E5%8B%99%E6%BB%BF%E6%84%8F%E5%BA%A6%E4%B8%8D%E5%8F%8A%E6%A0%BC_%E5%9C%96%E7%89%87%E4%BE%86%E6%BA%90pixabay.com.jpg.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+}
 .wrapper {
   padding: 20px 0px;
   position: absolute;
