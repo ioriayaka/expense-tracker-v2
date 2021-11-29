@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const routes = require('./routes')
 require('./config/mongoose')
-const port = process.env.port || 8080
+const PORT = process.env.PORT || 3000
 
 
 app.use(express.urlencoded({ extended: true }))
@@ -45,6 +45,6 @@ app.use((req, res, next) => {
 
 app.use(routes)
 
-app.listen(port, () => {
-  console.log(`The Express server is running on http://localhost:${port}.`)
+app.listen(PORT, () => {
+  console.log(`The Express server is running on http://localhost:${PORT}.`)
 })
