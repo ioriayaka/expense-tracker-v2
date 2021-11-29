@@ -13,7 +13,7 @@ const routes = require('./routes')
 require('./config/mongoose')
 const PORT = process.env.PORT || 3000
 
-
+const host = "0.0.0.0"
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
 
@@ -45,6 +45,6 @@ app.use((req, res, next) => {
 
 app.use(routes)
 
-app.listen(PORT, () => {
+app.listen(PORT, host, () => {
   console.log(`The Express server is running on http://localhost:${PORT}.`)
 })
