@@ -26,10 +26,10 @@ app.use(methodOverride('_method'))
 app.use(express.static('public'))
 app.use(cookieParser())
 app.use(session({
-  cookie: {
-    maxAge: 60000,
-    secure: true
-  },
+  // cookie: {
+  //   maxAge: 60000,
+  //   secure: true
+  // },
   store: new MemoryStore(),
   secret: 'ThisIsMySecret',
   // secret: process.env.SESSION_SECRET,
