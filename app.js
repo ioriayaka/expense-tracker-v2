@@ -4,43 +4,46 @@ const usePassport = require('./config/passport')
 const exphbs = require('express-handlebars')
 const flash = require('connect-flash')
 const app = express()
-const methodOverride = require('method-override') 
-var MemoryStore = require('memorystore')(session)
+const methodOverride = require('method-override')
+const routes = require('./routes')
+const cookieParser = require('cookie-parser');
+const MemoryStore = require('session-memory-store')(session);
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
-const routes = require('./routes')
 require('./config/mongoose')
 const PORT = process.env.PORT || 3000
-
-const host = "0.0.0.0"
-app.use(express.urlencoded({ extended: true }))
-app.use(express.static('public'))
-
-app.engine('handlebars', 
-  exphbs({ 
+const host = '0.0.0.0'
+app.engine('handlebars',
+  exphbs({
     defaultLayout: 'main',
     helpers: require('./config/handlebars-helpers')
   })
 )
 app.set('view engine', 'handlebars')
+app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+app.use(express.static('public'))
+app.use(cookieParser())
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 86400000 },
-  store: new MemoryStore({
-    checkPeriod: 86400000 // prune expired entries every 24h
-  }),
+  cookie: {
+    maxAge: 60000,
+    secure: true
+  },
+  store: new MemoryStore(),
+  secret: 'ThisIsMySecret',
+  // secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true
 }))
 usePassport(app)
 app.use(flash())
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
-  res.locals.success_messages = req.flash('success_messages')  
-  res.locals.error_messages = req.flash('error_messages')  
+  res.locals.success_messages = req.flash('success_messages')  // 設定 success_msg 訊息
+  res.locals.error_messages = req.flash('error_messages')  // 設定 warning_msg 訊息
+  next()
 })
 
 app.use(routes)
